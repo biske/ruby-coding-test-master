@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @leaderboard.name %>
+</p>
+
+<div>
+  <p>Entries:</p>
+  <ol>
+    <% @leaderboard.entries.sort_by(&:score).reverse.each do |entry| %>
+    <li><%= entry.username %> - <%= entry.score %></li>
+  <% end -%>
+  </ol>
+</div>
+
+<div>
+  <%= form_tag add_score_leaderboard_path(@leaderboard), method: :post do %>
+    <p>
+      <%= label_tag "Username" %>
+      <%= text_field_tag "username" %>
+    </p>
+    <p>
+      <%= label_tag "Score" %>
+      <%= text_field_tag "score" %>
+    </p>
+    <%= submit_tag "Add score" %>
+  <% end -%>
+</div>
+
+<hr>
+
+<%= link_to 'Edit', edit_leaderboard_path(@leaderboard) %> |
+<%= link_to 'Back', leaderboards_path %>

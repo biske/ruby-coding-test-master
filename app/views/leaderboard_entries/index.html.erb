@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Leaderboard Entries</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Leaderboard</th>
+      <th>Username</th>
+      <th>Score</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @leaderboard_entries.each do |leaderboard_entry| %>
+      <tr>
+        <td><%= leaderboard_entry.leaderboard %></td>
+        <td><%= leaderboard_entry.username %></td>
+        <td><%= leaderboard_entry.score %></td>
+        <td><%= link_to 'Show', leaderboard_entry %></td>
+        <td><%= link_to 'Edit', edit_leaderboard_entry_path(leaderboard_entry) %></td>
+        <td><%= link_to 'Destroy', leaderboard_entry, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Leaderboard Entry', new_leaderboard_entry_path %>
