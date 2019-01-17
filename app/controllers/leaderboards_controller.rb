@@ -46,11 +46,13 @@ class LeaderboardsController < ApplicationController
   end
 
   def add_score
-    username, score = params[:username]
-    score = params[:score]
+    username = params[:username]
+    score    = params[:score]
     if @leaderboard.entries.where(username: username).exists?
       entry = @leaderboard.entries.where(username: username).first
-      entry.update(score: score.to_i + entry.score)
+      entry.with_lock do
+        entry.update(score: score.to_i + entry.score)
+      end
     else
       @leaderboard.entries.create(username: username, score: score)
     end
