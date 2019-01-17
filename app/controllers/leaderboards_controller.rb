@@ -1,5 +1,5 @@
 class LeaderboardsController < ApplicationController
-  before_action :set_leaderboard, only: [:show, :edit, :update, :destroy, :add_score]
+  before_action :set_leaderboard, only: [:edit, :update, :destroy, :add_score]
 
   # GET /leaderboards
   def index
@@ -8,6 +8,8 @@ class LeaderboardsController < ApplicationController
 
   # GET /leaderboards/1
   def show
+    # No big gain here since there are 2 queries currently but it's by convention to preload data in controller
+    @leaderboard = Leaderboard.includes(:entries).find(params[:id])
   end
 
   # GET /leaderboards/new
