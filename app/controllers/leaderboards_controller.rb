@@ -10,6 +10,11 @@ class LeaderboardsController < ApplicationController
   def show
     # No big gain here since there are 2 queries currently but it's by convention to preload data in controller
     @leaderboard = Leaderboard.includes(:entries).find(params[:id])
+    @rankings = @leaderboard
+      .entries
+      .group(:username)
+      .order('sum_score DESC')
+      .sum(:score)
   end
 
   # GET /leaderboards/new
@@ -48,17 +53,22 @@ class LeaderboardsController < ApplicationController
   end
 
   def add_score
-    username = params[:username]
-    score    = params[:score]
-    if @leaderboard.entries.where(username: username).exists?
-      entry = @leaderboard.entries.where(username: username).first
-      entry.with_lock do
-        entry.update(score: score.to_i + entry.score)
+    previous_position = CalculatePosition.run(leaderboard: @leaderboard, username: params[:username])
+    @leaderboard_entry = @leaderboard.entries.build(leaderboard_entry_params)
+    
+    if @leaderboard_entry.save
+      new_position = CalculatePosition.run(leaderboard: @leaderboard, username: params[:username])
+      
+      if previous_position
+        positions_gained = previous_position - new_position 
+        notice = "#{params[:username]} gained #{positions_gained} #{'position'.pluralize(positions_gained)}"
+      else
+        notice = "You are on #{new_position} position!"
       end
+      redirect_to @leaderboard, notice: notice
     else
-      @leaderboard.entries.create(username: username, score: score)
+      render :show
     end
-    redirect_to @leaderboard, notice: 'Score added'
   end
 
   private
@@ -71,5 +81,9 @@ class LeaderboardsController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def leaderboard_params
     params.require(:leaderboard).permit(:name)
+  end
+
+  def leaderboard_entry_params
+    params.permit(:username, :score)
   end
 end

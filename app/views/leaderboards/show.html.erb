@@ -5,11 +5,21 @@
   <%= @leaderboard.name %>
 </p>
 
+
+<div>
+  <p>Rankings:</p>
+  <ol>
+    <% @rankings.each do |username, score|  %>
+      <li><%= username %> - <%= score %></li>
+    <% end -%>
+  </ol>
+</div>
+
 <div>
   <p>Entries:</p>
   <ol>
-    <% @leaderboard.entries.sort_by(&:score).reverse.each do |entry| %>
-    <li><%= entry.username %> - <%= entry.score %></li>
+    <% @leaderboard.entries.each do |entry| %>
+    <li><%= entry.username %> - <%= entry.score %>| <%= link_to 'Destroy', entry, method: :delete, data: { confirm: 'Are you sure?' } %></li>
   <% end -%>
   </ol>
 </div>

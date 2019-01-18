@@ -124,17 +124,19 @@ RSpec.describe LeaderboardEntriesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let!(:leaderboard_entry) { create(:leaderboard_entry, leaderboard: leaderboard) }
+    let(:leaderboard) { create(:leaderboard) }
+
     it "destroys the requested leaderboard_entry" do
-      leaderboard_entry = LeaderboardEntry.create! valid_attributes
+      
       expect {
         delete :destroy, params: {id: leaderboard_entry.to_param}, session: valid_session
       }.to change(LeaderboardEntry, :count).by(-1)
     end
 
     it "redirects to the leaderboard_entries list" do
-      leaderboard_entry = LeaderboardEntry.create! valid_attributes
       delete :destroy, params: {id: leaderboard_entry.to_param}, session: valid_session
-      expect(response).to redirect_to(leaderboard_entries_url)
+      expect(response).to redirect_to(leaderboard)
     end
   end
 

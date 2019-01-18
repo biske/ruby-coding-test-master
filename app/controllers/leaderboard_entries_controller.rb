@@ -41,8 +41,9 @@ class LeaderboardEntriesController < ApplicationController
 
   # DELETE /leaderboard_entries/1
   def destroy
+    leaderboard = @leaderboard_entry.leaderboard
     @leaderboard_entry.destroy
-    redirect_to leaderboard_entries_url, notice: 'Leaderboard entry was successfully destroyed.'
+    redirect_to leaderboard, notice: 'Leaderboard entry was successfully destroyed.'
   end
 
   private

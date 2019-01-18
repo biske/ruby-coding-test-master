@@ -139,13 +139,25 @@ RSpec.describe LeaderboardsController, type: :controller do
   end
 
   describe 'POST #add_score' do
-    it 'adds score' do
-      leaderboard = Leaderboard.create! valid_attributes
+    let!(:leaderboard) { create(:leaderboard) }
 
-      expect {
-        post :add_score, params: { id: leaderboard.id, username: 'lala', score: 1 }
-      }.to change(LeaderboardEntry, :count).by(1)
+    context 'when there is no entry for given username' do
+      it 'creates new entry' do
+        expect {
+          post :add_score, params: { id: leaderboard.id, username: 'lala', score: 1 }
+        }.to change(LeaderboardEntry, :count).by(1)
+      end
+    end
+
+    context 'when there is entry for given username' do
+      let!(:leaderboard_entry) { create(:leaderboard_entry, leaderboard: leaderboard, username: username) }
+      let(:username) { 'lala' }
+
+      it 'creates new entry' do
+        expect {
+          post :add_score, params: { id: leaderboard.id, username: username, score: 1 }
+        }.to change(LeaderboardEntry, :count).by(1)
+      end
     end
   end
-
 end
